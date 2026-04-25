@@ -76,6 +76,11 @@ main {
 }
 
 /* Logout button */
+.nav-user {
+  color: #9ca3af;
+  font-size: 0.85rem;
+}
+
 .nav-links button {
   background: none;
   border: 1px solid #6b7280;

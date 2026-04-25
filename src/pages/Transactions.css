@@ -77,6 +77,11 @@
   color: #16a34a;
 }
 
+.account-col {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
 @media (max-width: 600px) {
   .txn-header {
     flex-direction: column;

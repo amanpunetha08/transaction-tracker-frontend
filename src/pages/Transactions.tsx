@@ -1,19 +1,27 @@
 import { useEffect, useState } from "react";
-import { getTransactions } from "../services/api";
+import { getTransactions, getMe } from "../services/api";
 import type { Transaction } from "../types";
 import "./Transactions.css";
 
+interface Account { id: number; email: string }
+
 export default function Transactions() {
   const [txns, setTxns] = useState<Transaction[]>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [days, setDays] = useState(30);
-  const [typeFilter, setTypeFilter] = useState<"" | "debit" | "credit">("");
+  const [typeFilter, setTypeFilter] = useState("");
+  const [account, setAccount] = useState<number | undefined>();
   const [error, setError] = useState("");
 
   useEffect(() => {
-    getTransactions(days, typeFilter || undefined)
-      .then((res) => setTxns(res.transactions))
-      .catch(() => setError("Failed to load. Is the backend running?"));
-  }, [days, typeFilter]);
+    getMe().then((r) => setAccounts(r.gmail_accounts?.map((a) => ({ id: a.id, email: a.email })) || []));
+  }, []);
+
+  useEffect(() => {
+    getTransactions(days, typeFilter || undefined, account)
+      .then((r) => setTxns(r.transactions))
+      .catch(() => setError("Failed to load."));
+  }, [days, typeFilter, account]);
 
   if (error) return <p className="error">{error}</p>;
 
@@ -22,11 +30,17 @@ export default function Transactions() {
       <div className="txn-header">
         <h1>Transactions</h1>
         <div className="txn-filters">
-          <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as "" | "debit" | "credit")}>
-            <option value="">All</option>
+          <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+            <option value="">All Types</option>
             <option value="debit">Debit</option>
             <option value="credit">Credit</option>
           </select>
+          {accounts.length > 1 && (
+            <select value={account || ""} onChange={(e) => setAccount(e.target.value ? Number(e.target.value) : undefined)}>
+              <option value="">All Accounts</option>
+              {accounts.map((a) => <option key={a.id} value={a.id}>{a.email}</option>)}
+            </select>
+          )}
           <select value={days} onChange={(e) => setDays(Number(e.target.value))}>
             <option value={7}>7 days</option>
             <option value={30}>30 days</option>
@@ -37,7 +51,7 @@ export default function Transactions() {
       </div>
 
       {txns.length === 0 ? (
-        <p className="empty">No transactions found. Sync your emails first!</p>
+        <p className="empty">No transactions found.</p>
       ) : (
         <table className="txn-table">
           <thead>
@@ -46,6 +60,7 @@ export default function Transactions() {
               <th>Merchant</th>
               <th>Type</th>
               <th>Amount</th>
+              {accounts.length > 1 && <th>Account</th>}
             </tr>
           </thead>
           <tbody>
@@ -55,6 +70,7 @@ export default function Transactions() {
                 <td>{t.merchant}</td>
                 <td><span className={`badge badge-${t.type}`}>{t.type}</span></td>
                 <td className={`amount amount-${t.type}`}>₹{t.amount.toLocaleString()}</td>
+                {accounts.length > 1 && <td className="account-col">{t.account_email}</td>}
               </tr>
             ))}
           </tbody>

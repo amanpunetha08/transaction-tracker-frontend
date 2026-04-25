@@ -1,30 +1,35 @@
 import { useEffect, useState } from "react";
-import { getSummary, syncEmails } from "../services/api";
+import { getSummary, syncEmails, getMe } from "../services/api";
 import type { Summary } from "../types";
 import "./Dashboard.css";
 
+interface Account { id: number; email: string }
+
 export default function Dashboard() {
   const [summary, setSummary] = useState<Summary | null>(null);
+  const [accounts, setAccounts] = useState<Account[]>([]);
   const [days, setDays] = useState(30);
+  const [account, setAccount] = useState<number | undefined>();
   const [error, setError] = useState("");
   const [syncing, setSyncing] = useState(false);
   const [syncMsg, setSyncMsg] = useState("");
 
+  useEffect(() => {
+    getMe().then((r) => setAccounts(r.gmail_accounts?.map((a) => ({ id: a.id, email: a.email })) || []));
+  }, []);
+
   const loadData = () => {
-    getSummary(days).then(setSummary).catch(() => setError("Failed to load data."));
+    getSummary(days, account).then(setSummary).catch(() => setError("Failed to load data."));
   };
 
-  useEffect(loadData, [days]);
+  useEffect(loadData, [days, account]);
 
   const handleSync = () => {
     setSyncing(true);
     setSyncMsg("");
     syncEmails(days)
-      .then((r) => {
-        setSyncMsg(`Synced! ${r.synced} new transactions from ${r.total_emails} emails.`);
-        loadData();
-      })
-      .catch(() => setSyncMsg("Sync failed. Try again."))
+      .then((r) => { setSyncMsg(`Synced! ${r.total_synced} new transactions.`); loadData(); })
+      .catch(() => setSyncMsg("Sync failed."))
       .finally(() => setSyncing(false));
   };
 
@@ -41,11 +46,17 @@ export default function Dashboard() {
           <button className="sync-btn" onClick={handleSync} disabled={syncing}>
             {syncing ? "Syncing..." : "⟳ Sync Emails"}
           </button>
+          {accounts.length > 1 && (
+            <select value={account || ""} onChange={(e) => setAccount(e.target.value ? Number(e.target.value) : undefined)}>
+              <option value="">All Accounts</option>
+              {accounts.map((a) => <option key={a.id} value={a.id}>{a.email}</option>)}
+            </select>
+          )}
           <select value={days} onChange={(e) => setDays(Number(e.target.value))}>
-            <option value={7}>Last 7 days</option>
-            <option value={30}>Last 30 days</option>
-            <option value={90}>Last 90 days</option>
-            <option value={365}>Last year</option>
+            <option value={7}>7 days</option>
+            <option value={30}>30 days</option>
+            <option value={90}>90 days</option>
+            <option value={365}>1 year</option>
           </select>
         </div>
       </div>
@@ -63,9 +74,7 @@ export default function Dashboard() {
         </div>
         <div className="card card-net">
           <span className="card-label">Net</span>
-          <span className="card-value">
-            ₹{(summary.total_credit - summary.total_debit).toLocaleString()}
-          </span>
+          <span className="card-value">₹{(summary.total_credit - summary.total_debit).toLocaleString()}</span>
         </div>
       </div>
 
