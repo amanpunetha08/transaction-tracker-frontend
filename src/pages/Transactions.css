@@ -1,5 +1,5 @@
 .transactions {
-  max-width: 800px;
+  max-width: 700px;
   margin: 0 auto;
   padding: 1rem;
 }
@@ -23,69 +23,201 @@
 
 .txn-filters select {
   padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  font-size: 0.9rem;
-}
-
-.txn-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.txn-table th {
-  text-align: left;
-  padding: 0.6rem 0.8rem;
-  border-bottom: 2px solid #e5e7eb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
   font-size: 0.85rem;
+  background: #fff;
+}
+
+/* Transaction list */
+.txn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.txn-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.txn-date-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0.2rem;
+  margin-bottom: 0.3rem;
+  font-size: 0.8rem;
+  font-weight: 600;
   color: #6b7280;
-}
-
-.txn-table td {
-  padding: 0.6rem 0.8rem;
-  border-bottom: 1px solid #f3f4f6;
-}
-
-.badge {
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
   text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
-.badge-debit {
+.txn-date-total {
+  font-weight: 400;
+  text-transform: none;
+}
+
+/* Transaction card */
+.txn-card {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.8rem 1rem;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #f3f4f6;
+  transition: box-shadow 0.15s;
+}
+
+.txn-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.txn-card-dup {
+  background: #fffbeb;
+  border-color: #fde68a;
+}
+
+/* Icon */
+.txn-icon {
+  flex-shrink: 0;
+}
+
+.txn-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.txn-arrow.debit {
   background: #fee2e2;
-  color: #991b1b;
-}
-
-.badge-credit {
-  background: #dcfce7;
-  color: #166534;
-}
-
-.amount {
-  font-weight: 600;
-  text-align: right;
-}
-
-.amount-debit {
   color: #dc2626;
 }
 
-.amount-credit {
+.txn-arrow.credit {
+  background: #dcfce7;
   color: #16a34a;
 }
 
-.account-col {
-  font-size: 0.8rem;
+/* Details */
+.txn-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.txn-merchant {
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.txn-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.txn-account {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.txn-dup-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.1rem 0.4rem;
+  background: #fbbf24;
+  color: #78350f;
+  border-radius: 4px;
+}
+
+/* Right side */
+.txn-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+  flex-shrink: 0;
+}
+
+.txn-amount {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.txn-amount.debit {
+  color: #dc2626;
+}
+
+.txn-amount.credit {
+  color: #16a34a;
+}
+
+.dismiss-btn {
+  padding: 0.15rem 0.5rem;
+  background: none;
+  border: 1px solid #f87171;
+  color: #f87171;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.dismiss-btn:hover {
+  background: #fef2f2;
+}
+
+.dup-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.keep-btn {
+  padding: 0.15rem 0.5rem;
+  background: none;
+  border: 1px solid #16a34a;
+  color: #16a34a;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.keep-btn:hover {
+  background: #f0fdf4;
+}
+
+.error, .empty {
+  text-align: center;
+  padding: 3rem;
   color: #6b7280;
 }
 
+/* Mobile */
 @media (max-width: 600px) {
   .txn-header {
     flex-direction: column;
     gap: 0.8rem;
     align-items: flex-start;
+  }
+  .txn-merchant {
+    font-size: 0.85rem;
+  }
+  .txn-amount {
+    font-size: 0.9rem;
   }
 }

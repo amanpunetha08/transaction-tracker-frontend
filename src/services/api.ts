@@ -67,3 +67,9 @@ export const getTransactions = (days?: number, type?: string, account?: number) 
 
 export const syncEmails = (days = 30) =>
   fetchJson<{ total_synced: number; total_emails: number; accounts: object[] }>(`/api/sync/?days=${days}`);
+
+export const dismissTransaction = (id: number) =>
+  post<{ status: string }>(`/api/transactions/${id}/dismiss/`, {});
+
+export const keepTransaction = (id: number) =>
+  post<{ status: string }>(`/api/transactions/${id}/keep/`, {});

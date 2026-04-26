@@ -5,6 +5,7 @@ export interface Transaction {
   merchant: string;
   date: string;
   account_email?: string;
+  is_duplicate?: boolean;
 }
 
 export interface Summary {
